@@ -11,7 +11,8 @@ val jacksonVersion: String by extra
 val springDataVersion : String by extra
 val springBootVersion: String by extra
 val springVersion: String by extra
-val dokkaVersion : String by extra
+val dokkaVersion: String by extra
+val nucleusVersion: String by extra
 
 data class Package(
     val groupId: String,
@@ -58,9 +59,14 @@ val springTestPackages: Array<Package> = arrayOf(
     Package("org.springframework.boot", "spring-boot-test-autoconfigure", springBootVersion)
 )
 
+val nucleusPackages: Array<Package> = arrayOf(
+    Package("com.github.immanuelqrw", "Nucleus-API", nucleusVersion)
+)
+
 val packages: Array<Package> = arrayOf(
     Package("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion),
     Package("org.jetbrains.dokka", "dokka-gradle-plugin", dokkaVersion),
+    *nucleusPackages,
     *jacksonPackages,
     *springPackages,
     *springBootPackages,
