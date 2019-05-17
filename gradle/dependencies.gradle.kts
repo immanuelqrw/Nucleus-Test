@@ -20,6 +20,13 @@ data class Package(
     val version: String
 )
 
+
+val nucleusPackages: Array<Package> = arrayOf(
+)
+
+val nucleusTestPackages: Array<Package> = arrayOf(
+)
+
 val jacksonPackages: Array<Package> = arrayOf(
     Package("com.fasterxml.jackson.module", "jackson-module-kotlin", jacksonVersion),
     Package("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
@@ -59,10 +66,6 @@ val springTestPackages: Array<Package> = arrayOf(
     Package("org.springframework.boot", "spring-boot-test-autoconfigure", springBootVersion)
 )
 
-val nucleusPackages: Array<Package> = arrayOf(
-    Package("com.github.immanuelqrw", "Nucleus-API", nucleusVersion)
-)
-
 val packages: Array<Package> = arrayOf(
     Package("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion),
     Package("org.jetbrains.dokka", "dokka-gradle-plugin", dokkaVersion),
@@ -78,7 +81,8 @@ val packages: Array<Package> = arrayOf(
 val testPackages: Array<Package> = arrayOf(
     Package("org.hibernate", "hibernate-testing", "5.3.7.Final"),
     *jUnitPackages,
-    *springTestPackages
+    *springTestPackages,
+    *nucleusTestPackages
 )
 
 dependencies {
