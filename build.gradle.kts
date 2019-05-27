@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.dokka.gradle.DokkaTask
 
 val projectGroup = "com.immanuelqrw.core"
-val projectArtifcat = "nucleus-test"
+val projectArtifact = "nucleus-test"
 val projectVersion = "0.0.1-pre-alpha"
 
 group = projectGroup
