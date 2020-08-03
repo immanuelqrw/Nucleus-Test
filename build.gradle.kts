@@ -1,22 +1,30 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.dokka.gradle.DokkaTask
 
-group = "com.immanuelqrw.core"
-version = "0.0.1-pre-alpha"
+val projectGroup = "com.immanuelqrw.core"
+val projectArtifact = "nucleus-test"
+val projectVersion = "0.0.1-pre-alpha"
+
+group = projectGroup
+version = projectVersion
 
 apply(from = "gradle/constants.gradle.kts")
 
 plugins {
     java
-    kotlin("jvm") version "1.3.11"
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.11"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.11"
-    id("org.jetbrains.kotlin.plugin.spring") version "1.3.11"
+    kotlin("jvm") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.spring") version "1.3.72"
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("org.sonarqube") version "2.6"
     id("org.jetbrains.dokka") version "0.9.17"
     idea
+    `maven-publish`
 }
+
+val awsAccessKey: String by project
+val awsSecretKey: String by project
 
 repositories {
     mavenCentral()
@@ -50,16 +58,6 @@ tasks {
         outputFormat = "html"
         outputDirectory = "$buildDir/docs/dokka"
     }
-}
-
-val databaseBuild by tasks.creating(Exec::class) {
-    workingDir("./script")
-    commandLine("python", "instantiate_database.py")
-}
-
-val testDatabaseBuild: Exec by tasks.creating(Exec::class) {
-    workingDir("./script")
-    commandLine("python", "construct_database.py")
 }
 
 sourceSets.create("integrationTest") {
@@ -101,4 +99,33 @@ val sonar: Task = tasks["sonarqube"]
 val check by tasks.getting {
     dependsOn(integrationTest)
     dependsOn(sonar)
+}
+val sourcesJar by tasks.registering(Jar::class) {
+    classifier = "sources"
+    from(sourceSets["main"].allSource)
+}
+
+val repoUsername: String by project
+val repoToken: String by project
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/immanuelqrw/Nucleus-Test")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: repoUsername
+                password = project.findProperty("gpr.key") as String? ?: repoToken
+            }
+        }
+    }
+    publications {
+        register("gpr", MavenPublication::class) {
+            groupId = projectGroup
+            artifactId = projectArtifact
+            version = projectVersion
+            from(components["java"])
+            artifact(sourcesJar.get())
+        }
+    }
 }
