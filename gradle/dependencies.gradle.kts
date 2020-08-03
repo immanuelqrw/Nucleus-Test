@@ -12,7 +12,6 @@ val springDataVersion : String by extra
 val springBootVersion: String by extra
 val springVersion: String by extra
 val dokkaVersion: String by extra
-val nucleusVersion: String by extra
 
 data class Package(
     val groupId: String,

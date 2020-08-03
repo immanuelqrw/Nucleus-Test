@@ -12,10 +12,10 @@ apply(from = "gradle/constants.gradle.kts")
 
 plugins {
     java
-    kotlin("jvm") version "1.3.61"
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.61"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.61"
-    id("org.jetbrains.kotlin.plugin.spring") version "1.3.61"
+    kotlin("jvm") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.spring") version "1.3.72"
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("org.sonarqube") version "2.6"
     id("org.jetbrains.dokka") version "0.9.17"
@@ -29,20 +29,6 @@ val awsSecretKey: String by project
 repositories {
     mavenCentral()
     jcenter()
-    maven {
-        url = uri("s3://repo.immanuelqrw.com/release")
-        credentials(AwsCredentials::class.java) {
-            accessKey = awsAccessKey
-            secretKey = awsSecretKey
-        }
-    }
-    maven {
-        url = uri("s3://repo.immanuelqrw.com/snapshot")
-        credentials(AwsCredentials::class.java) {
-            accessKey = awsAccessKey
-            secretKey = awsSecretKey
-        }
-    }
 }
 
 
@@ -72,16 +58,6 @@ tasks {
         outputFormat = "html"
         outputDirectory = "$buildDir/docs/dokka"
     }
-}
-
-val databaseBuild by tasks.creating(Exec::class) {
-    workingDir("./script")
-    commandLine("python", "instantiate_database.py")
-}
-
-val testDatabaseBuild: Exec by tasks.creating(Exec::class) {
-    workingDir("./script")
-    commandLine("python", "construct_database.py")
 }
 
 sourceSets.create("integrationTest") {
@@ -130,20 +106,21 @@ val sourcesJar by tasks.registering(Jar::class) {
 }
 
 val repoUsername: String by project
-val repoPassword: String by project
+val repoToken: String by project
 
 publishing {
     repositories {
         maven {
-            url = uri("s3://repo.immanuelqrw.com/release/")
-            credentials(AwsCredentials::class.java) {
-                accessKey = awsAccessKey
-                secretKey = awsSecretKey
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/immanuelqrw/Nucleus-Test")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: repoUsername
+                password = project.findProperty("gpr.key") as String? ?: repoToken
             }
         }
     }
     publications {
-        register("mavenJava", MavenPublication::class) {
+        register("gpr", MavenPublication::class) {
             groupId = projectGroup
             artifactId = projectArtifact
             version = projectVersion
